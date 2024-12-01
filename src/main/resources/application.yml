@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: Android-Backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/news_app
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: 8080
+  servlet:
+    context-path: /android
+
+# springdoc-openapi
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.android.controller
+
+# knife4j
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
