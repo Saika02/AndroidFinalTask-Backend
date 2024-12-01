@@ -15,13 +15,13 @@ import org.springframework.util.DigestUtils;
 import java.util.Map;
 
 /**
-* @author DELL G15
-* @description 针对表【users】的数据库操作Service实现
-* @createDate 2024-11-23 21:08:16
-*/
+ * @author DELL G15
+ * @description 针对表【users】的数据库操作Service实现
+ * @createDate 2024-11-23 21:08:16
+ */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-    implements UserService {
+        implements UserService {
 
     @Resource
     UserMapper userMapper;
@@ -30,7 +30,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public User getSafetyUser(User tempUser) {
-        if(tempUser == null){
+        if (tempUser == null) {
             return null;
         }
         User safetyUser = new User();
@@ -42,36 +42,37 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public User userLogin(String username, String password) {
-        if(StringUtils.isAnyBlank(username,password)){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户名或密码不能为空");
+        if (StringUtils.isAnyBlank(username, password)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名或密码不能为空");
         }
         String encryptPassword = DigestUtils.md5DigestAsHex((password + SALT).getBytes());
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.allEq(Map.of("username",username,"password",encryptPassword));
+        wrapper.apply("BINARY username = {0}", username)
+                .eq("password", encryptPassword);
         User user = userMapper.selectOne(wrapper);
-        if(user == null){
-            throw new BusinessException(ErrorCode.LOGIN_ERROR,"用户名或密码错误");
+        if (user == null) {
+            throw new BusinessException(ErrorCode.LOGIN_ERROR, "用户名或密码错误");
         }
         User safetyUser = getSafetyUser(user);
         return safetyUser;
     }
 
     @Override
-    public Long userRegister(String userAccount, String userPassword) {
+    public Long userRegister(String username, String password) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("username",userAccount);
-        wrapper.eq("password",userPassword);
+        wrapper.apply("BINARY username = {0}", username)
+                .eq("password", password);
         User user = userMapper.selectOne(wrapper);
-        if(user != null){
-            throw new BusinessException(ErrorCode.USER_EXISTS,"用户已存在");
+        if (user != null) {
+            throw new BusinessException(ErrorCode.USER_EXISTS, "用户已存在");
         }
         User newUser = new User();
-        String encryptPassword = DigestUtils.md5DigestAsHex((userPassword + SALT).getBytes());
-        newUser.setUsername(userAccount);
+        String encryptPassword = DigestUtils.md5DigestAsHex((password + SALT).getBytes());
+        newUser.setUsername(username);
         newUser.setPassword(encryptPassword);
         int res = userMapper.insert(newUser);
-        if(res <= 0){
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"注册失败");
+        if (res <= 0) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败");
         }
         return newUser.getUserId();
     }
