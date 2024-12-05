@@ -25,6 +25,9 @@ public class User implements Serializable {
     @TableField("password")
     private String password;
 
+    @TableField("avatarUrl")
+    private String avatarUrl;
+
     @TableField("role")
     private Integer role;
 

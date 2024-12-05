@@ -71,17 +71,36 @@ public class NewsInitializer implements CommandLineRunner {
     private List<News> parseNews(String jsonData, String newsType, String typeDesc) {
         List<News> newsList = new ArrayList<>();
         JsonArray jsonArray = JsonParser.parseString(jsonData).getAsJsonArray();
+
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject obj = jsonArray.get(i).getAsJsonObject();
-            News news = new News();
-            news.setTitle(obj.get("title").getAsString());
-            news.setPublishTime(obj.get("time").getAsString());
-            news.setDocurl(obj.get("docurl").getAsString());
-            news.setImageUrl(obj.get("imgurl").getAsString());
-            news.setNewsType(newsType);
-            news.setTypeDesc(typeDesc);
-            newsList.add(news);
+
+            // 检查imgurl和time字段是否存在且不为空
+            if (!isValidField(obj, "imgurl") || !isValidField(obj, "time")) {
+                continue;  // 跳过没有图片或发布时间的新闻
+            }
+
+            try {
+                News news = new News();
+                news.setTitle(obj.get("title").getAsString());
+                news.setPublishTime(obj.get("time").getAsString());
+                news.setDocurl(obj.get("docurl").getAsString());
+                news.setImageUrl(obj.get("imgurl").getAsString());
+                news.setNewsType(newsType);
+                news.setTypeDesc(typeDesc);
+                newsList.add(news);
+            } catch (Exception e) {
+                log.error("解析新闻数据失败: {}", e.getMessage());
+            }
         }
+
+        log.info("类型 {} 共解析 {} 条有效新闻", typeDesc, newsList.size());
         return newsList;
+    }
+
+    private boolean isValidField(JsonObject obj, String fieldName) {
+        return obj.has(fieldName)
+                && !obj.get(fieldName).isJsonNull()
+                && !obj.get(fieldName).getAsString().trim().isEmpty();
     }
 }

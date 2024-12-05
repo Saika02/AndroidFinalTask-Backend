@@ -24,4 +24,10 @@ public class GlobalExceptionHandler {
         return ResultUtils.error(ErrorCode.SYSTEM_ERROR, e.getMessage(), "");
     }
 
+//    @ExceptionHandler(Exception.class)
+//    public BaseResponse<?> exceptionHandler(Exception e) {
+//        log.error("exception", e);
+//        return ResultUtils.error(ErrorCode.SYSTEM_ERROR, e.getMessage(), "");
+//    }
+
 }
