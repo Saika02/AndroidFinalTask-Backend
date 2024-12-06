@@ -15,4 +15,6 @@ public interface NewsService extends IService<News> {
 
     List<News> getNewsList();
 
+    String getNewsDetail(String newsUrl);
+
 }
