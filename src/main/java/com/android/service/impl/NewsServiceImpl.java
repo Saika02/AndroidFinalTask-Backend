@@ -1,6 +1,15 @@
 package com.android.service.impl;
 
+import com.android.common.ErrorCode;
+import com.android.common.exception.BusinessException;
+import com.android.constant.NewsConstants;
+import com.android.constant.UserConstants;
+import com.android.mapper.BrowsingHistoryMapper;
+import com.android.mapper.NewsContentMapper;
+import com.android.mapper.UserFavoriteMapper;
 import com.android.model.News;
+import com.android.model.NewsContent;
+import com.android.model.UserFavorite;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.android.service.NewsService;
@@ -25,6 +34,14 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
 
     @Resource
     private NewsMapper newsMapper;
+    @Resource
+    private NewsContentMapper newsContentMapper;
+
+    @Resource
+    private UserFavoriteMapper userFavoriteMapper;
+
+    @Resource
+    private BrowsingHistoryMapper browsingHistoryMapper;
 
     @Override
     public List<News> getNewsList() {
@@ -35,22 +52,48 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
         return newsMapper.selectList(queryWrapper);
     }
 
+
+
     @Override
-    public String getNewsDetail(String newsUrl) {
+    public String getNewsContent(Long newsId) {
+        QueryWrapper<NewsContent> wrapper = new QueryWrapper<>();
+        wrapper.eq("newsId", newsId);
+        NewsContent newsContent = newsContentMapper.selectOne(wrapper);
+        if(newsContent == null) {
+            throw new BusinessException(ErrorCode.NEWS_NOT_FOUND, "新闻内容不存在");
+        }
+        return buildFormattedHtml(newsContent.getContent());
+    }
+
+    @Override
+    public boolean checkIsFavorite(Long userId, Long newsId) {
+        News news = newsMapper.selectById(newsId);
+        if (news == null) {
+            throw new BusinessException(ErrorCode.NEWS_NOT_FOUND, "新闻不存在");
+        }
+        QueryWrapper<UserFavorite> wrapper = new QueryWrapper<>();
+        wrapper.eq(UserConstants.USER_ID, userId);
+        wrapper.eq(NewsConstants.NEWS_ID, newsId);
+        return userFavoriteMapper.selectCount(wrapper) > 0;
+    }
+
+    @Override
+    public List<News> getFavoriteNews(Long userId) {
         try {
-            Document doc = Jsoup.connect(newsUrl)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-                    .timeout(10000)
-                    .get();
+            return userFavoriteMapper.getFavoriteNews(userId);
+        }
+        catch (Exception e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据库查询失败");
+        }
+    }
 
-            Element contentDiv = doc.selectFirst("div.post_body");
-            if (contentDiv == null) {
-                throw new RuntimeException("未找到新闻内容");
-            }
-
-            return buildFormattedHtml(contentDiv.html());
-        } catch (Exception e) {
-            throw new RuntimeException("获取新闻详情失败: " + e.getMessage());
+    @Override
+    public List<News> getBrowsingHistories(Long userId) {
+        try {
+            return browsingHistoryMapper.selectHistoryNews(userId);
+        }
+        catch (Exception e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据库查询失败");
         }
     }
 
@@ -66,6 +109,8 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
                 "</head>" +
                 "<body>" + content + "</body></html>";
     }
+
+
 }
 
 

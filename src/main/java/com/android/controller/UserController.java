@@ -45,6 +45,20 @@ public class UserController {
         return ResultUtils.success(userService.userRegister(username, password));
     }
 
+    @PostMapping("/addUserFavorite")
+    public BaseResponse<Integer> addUserFavorite(@RequestParam("userId") Long userId, @RequestParam("newsId") Long newsId) {
+        return ResultUtils.success(userService.addFavorite(userId, newsId));
+    }
+    @PostMapping("/addHistory")
+    public BaseResponse<Integer> addHistory(@RequestParam("userId") Long userId, @RequestParam("newsId") Long newsId) {
+        return ResultUtils.success(userService.addHistory(userId, newsId));
+    }
+    @PostMapping("/removeUserFavorite")
+    public BaseResponse<Integer> removeUserFavorite(@RequestParam("userId") Long userId, @RequestParam("newsId") Long newsId) {
+        return ResultUtils.success(userService.removeFavorite(userId, newsId));
+    }
+
+
     @GetMapping("/test")
     public BaseResponse<String> test() {
         return ResultUtils.success("test");

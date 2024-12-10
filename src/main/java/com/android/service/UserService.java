@@ -18,4 +18,10 @@ public interface UserService extends IService<User> {
     User getSafetyUser(User tempUser);
 
     int updateUser(User user);
+
+    int addFavorite(Long userId, Long newsId);
+
+    int removeFavorite(Long userId, Long newsId);
+
+    Integer addHistory(Long userId, Long newsId);
 }

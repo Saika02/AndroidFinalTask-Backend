@@ -18,6 +18,11 @@ public enum ErrorCode {
     USER_NOT_FOUND(40300,"用户不存在",""),
     USER_EXISTS(40301,"用户已存在",""),
 
+    NEWS_NOT_FOUND(40400,"新闻不存在",""),
+    NEWS_EXISTS(40401,"新闻已存在",""),
+
+    FAVORITE_EXISTS(40500,"收藏已存在",""),
+    FAVORITE_NOT_FOUND(40501,"收藏不存在",""),
 
     SYSTEM_ERROR(50000, "系统内部异常", "");
 
