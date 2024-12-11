@@ -9,7 +9,7 @@ import java.util.List;
 public interface NewsService extends IService<News> {
 
 
-    List<News> getNewsList();
+    List<News> getRandomNewsList();
 
     String getNewsContent(Long newsId);
 

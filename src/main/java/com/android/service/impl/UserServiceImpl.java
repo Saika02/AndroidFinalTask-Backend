@@ -219,6 +219,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "添加失败");
         }
     }
+
+    @Override
+    public Integer clearHistories(Long userId) {
+        try {
+            QueryWrapper<BrowsingHistory> wrapper = new QueryWrapper<>();
+            wrapper.eq(UserConstants.USER_ID, userId);
+            return browsingHistoryMapper.delete(wrapper);
+        } catch (Exception e) {
+            log.error("清空失败", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "清空失败");
+        }
+    }
 }
 
 

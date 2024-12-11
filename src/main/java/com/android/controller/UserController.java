@@ -58,9 +58,13 @@ public class UserController {
         return ResultUtils.success(userService.removeFavorite(userId, newsId));
     }
 
-
     @GetMapping("/test")
     public BaseResponse<String> test() {
         return ResultUtils.success("test");
+    }
+
+    @DeleteMapping("/clearHistories")
+    public BaseResponse<Integer> clearHistories(@RequestParam("userId") Long userId) {
+        return ResultUtils.success(userService.clearHistories(userId));
     }
 } 

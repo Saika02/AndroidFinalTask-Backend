@@ -20,7 +20,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static net.sf.jsqlparser.parser.feature.Feature.limit;
 
 /**
 * @author DELL G15
@@ -44,12 +48,37 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
     private BrowsingHistoryMapper browsingHistoryMapper;
 
     @Override
-    public List<News> getNewsList() {
-        QueryWrapper<News> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("newsType", "yaowen20200213");
-        // 打印实际的SQL语句
-        System.out.println(queryWrapper.getSqlSegment());
-        return newsMapper.selectList(queryWrapper);
+    public List<News> getRandomNewsList() {
+        int limit = 20;
+        // 获取所有新闻类型
+        String[] newsTypes = {
+                NewsConstants.TYPE_YAOWEN,
+                NewsConstants.TYPE_GUONEI,
+                NewsConstants.TYPE_GUOJI,
+                NewsConstants.TYPE_WAR,
+                NewsConstants.TYPE_TECH,
+                NewsConstants.TYPE_MONEY,
+                NewsConstants.TYPE_SPORTS,
+                NewsConstants.TYPE_ENT
+        };
+
+        int perTypeLimit = (int) Math.ceil((double) limit / newsTypes.length);
+
+        List<News> result = new ArrayList<>();
+        for (String type : newsTypes) {
+            QueryWrapper<News> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq(NewsConstants.NEWS_TYPE, type)
+                    .orderByAsc("RAND()")
+                    .last("LIMIT " + perTypeLimit);
+            result.addAll(newsMapper.selectList(queryWrapper));
+        }
+        if(result.size() < limit) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "获取新闻失败");
+        }
+        // 随机打乱结果
+        Collections.shuffle(result);
+        // 如果结果数量超过limit，截取前limit条
+        return result.size() > limit ? result.subList(0, limit) : result;
     }
 
 

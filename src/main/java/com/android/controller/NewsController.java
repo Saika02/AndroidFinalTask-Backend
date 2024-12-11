@@ -23,8 +23,8 @@ public class NewsController {
 
 
     @GetMapping("/list")
-    public BaseResponse<List<News>> getNewsList() {
-        List<News> newsList = newsService.getNewsList();
+    public BaseResponse<List<News>> getRandomNewsList() {
+        List<News> newsList = newsService.getRandomNewsList();
         return ResultUtils.success(newsList);
     }
 
