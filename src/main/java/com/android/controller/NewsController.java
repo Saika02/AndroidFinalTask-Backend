@@ -42,6 +42,13 @@ public class NewsController {
         return ResultUtils.success(favoriteNews);
     }
 
+    @GetMapping("/getNewsByType")
+    public BaseResponse<List<News>> getNewsByType(@RequestParam("newsType") String type) {
+        log.info("获取新闻列表，type: {}", type);
+        List<News> newsList = newsService.getNewsByType(type);
+        return ResultUtils.success(newsList);
+    }
+
     @GetMapping("/getBrowsingHistories")
     public BaseResponse<List<News>> getBrowsingHistories(@RequestParam("userId") Long userId) {
         log.info("获取用户浏览历史，userId: {}", userId);

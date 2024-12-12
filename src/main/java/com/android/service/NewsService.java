@@ -18,4 +18,7 @@ public interface NewsService extends IService<News> {
     List<News> getFavoriteNews(Long userId);
 
     List<News> getBrowsingHistories(Long userId);
+
+    List<News> getNewsByType(String type);
+
 }

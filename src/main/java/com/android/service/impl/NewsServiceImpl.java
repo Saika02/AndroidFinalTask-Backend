@@ -126,6 +126,20 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
         }
     }
 
+    @Override
+    public List<News> getNewsByType(String type) {
+        int limit = 20;
+        QueryWrapper<News> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(NewsConstants.NEWS_TYPE, type)
+                .orderByAsc("RAND()")
+                .last("LIMIT " + limit);
+        List<News> list = newsMapper.selectList(queryWrapper);
+        if(list.size() < limit) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "获取新闻失败");
+        }
+        return list;
+    }
+
     private String buildFormattedHtml(String content) {
         return "<html>" +
                 "<head>" +
