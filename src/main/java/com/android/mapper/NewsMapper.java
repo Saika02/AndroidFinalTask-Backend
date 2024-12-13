@@ -14,7 +14,14 @@ import java.util.List;
 * @Entity com.android.model.News
 */
 public interface NewsMapper extends BaseMapper<News> {
-
+    @Select("""
+            SELECT n.*
+            FROM news n
+            WHERE n.title LIKE CONCAT('%', #{keyword}, '%')
+         
+            ORDER BY n.publishTime DESC
+            """)
+    List<News> searchNews(@Param("keyword") String keyword);
 }
 
 

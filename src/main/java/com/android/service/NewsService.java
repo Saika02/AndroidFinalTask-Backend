@@ -21,4 +21,5 @@ public interface NewsService extends IService<News> {
 
     List<News> getNewsByType(String type);
 
+    List<News> searchNews(String keyword);
 }

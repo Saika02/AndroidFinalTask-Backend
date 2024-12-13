@@ -56,6 +56,13 @@ public class NewsController {
         return ResultUtils.success(browsingHistories);
     }
 
+    @GetMapping("/search")
+    public BaseResponse<List<News>> searchNews(@RequestParam("keyword") String keyword) {
+        log.info("搜索新闻，keyword: {}", keyword);
+        List<News> newsList = newsService.searchNews(keyword);
+        return ResultUtils.success(newsList);
+    }
+
     @GetMapping("/content")
     public BaseResponse<String> getNewsDetail(@RequestParam("id") Long newsId) {
         log.info("访问新闻详情接口，url: {}", newsId);

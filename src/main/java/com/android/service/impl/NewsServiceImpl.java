@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.android.service.NewsService;
 import com.android.mapper.NewsMapper;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -138,6 +139,14 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "获取新闻失败");
         }
         return list;
+    }
+
+    @Override
+    public List<News> searchNews(String keyword) {
+        if(StringUtils.isBlank(keyword)) {
+            return null;
+        }
+        return newsMapper.searchNews(keyword);
     }
 
     private String buildFormattedHtml(String content) {
