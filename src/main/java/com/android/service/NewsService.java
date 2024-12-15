@@ -1,5 +1,6 @@
 package com.android.service;
 
+import com.android.model.Comment;
 import com.android.model.News;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -22,4 +23,8 @@ public interface NewsService extends IService<News> {
     List<News> getNewsByType(String type);
 
     List<News> searchNews(String keyword);
+
+    List<Comment> getNewsComment(Long newsId);
+
+    boolean saveComment(Comment comment);
 }

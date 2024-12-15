@@ -4,17 +4,16 @@ import com.android.common.ErrorCode;
 import com.android.common.exception.BusinessException;
 import com.android.constant.NewsConstants;
 import com.android.constant.UserConstants;
-import com.android.mapper.BrowsingHistoryMapper;
-import com.android.mapper.NewsContentMapper;
-import com.android.mapper.UserFavoriteMapper;
+import com.android.mapper.*;
+import com.android.model.Comment;
 import com.android.model.News;
 import com.android.model.NewsContent;
 import com.android.model.UserFavorite;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.android.service.NewsService;
-import com.android.mapper.NewsMapper;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,6 +32,7 @@ import static net.sf.jsqlparser.parser.feature.Feature.limit;
 * @createDate 2024-12-03 00:17:14
 */
 @Service
+@Slf4j
 public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
     implements NewsService{
 
@@ -47,6 +47,9 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
 
     @Resource
     private BrowsingHistoryMapper browsingHistoryMapper;
+
+    @Resource
+    private CommentMapper commentMapper;
 
     @Override
     public List<News> getRandomNewsList() {
@@ -147,6 +150,19 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
             return null;
         }
         return newsMapper.searchNews(keyword);
+    }
+
+    @Override
+    public List<Comment> getNewsComment(Long newsId) {
+        QueryWrapper<Comment> wrapper = new QueryWrapper<>();
+        wrapper.eq(NewsConstants.NEWS_ID, newsId);
+        return commentMapper.selectList(wrapper);
+    }
+
+    @Override
+    public boolean saveComment(Comment comment) {
+        log.info("发送评论，comment: {}", comment);
+        return commentMapper.insert(comment) > 0;
     }
 
     private String buildFormattedHtml(String content) {

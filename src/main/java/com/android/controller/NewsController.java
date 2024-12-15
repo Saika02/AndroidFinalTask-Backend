@@ -3,6 +3,7 @@ package com.android.controller;
 
 import com.android.common.BaseResponse;
 import com.android.common.utils.ResultUtils;
+import com.android.model.Comment;
 import com.android.model.News;
 import com.android.service.NewsService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -69,4 +70,20 @@ public class NewsController {
         String newsDetail = newsService.getNewsContent(newsId);
         return ResultUtils.success(newsDetail);
     }
+
+    @GetMapping("/getNewsComment")
+    public BaseResponse<List<Comment>> getNewsComment(@RequestParam("newsId") Long newsId) {
+        log.info("获取新闻评论，newsId: {}", newsId);
+        List<Comment> commentList = newsService.getNewsComment(newsId);
+        return ResultUtils.success(commentList);
+    }
+
+    @PostMapping("sendComment")
+    public BaseResponse<Boolean> sendComment(@RequestBody Comment comment) {
+        log.info("发送评论，comment: {}", comment);
+        boolean result = newsService.saveComment(comment);
+        return ResultUtils.success(result);
+    }
+
+
 }
