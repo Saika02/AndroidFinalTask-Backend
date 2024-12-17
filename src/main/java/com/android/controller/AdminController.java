@@ -3,6 +3,7 @@ package com.android.controller;
 import com.android.common.BaseResponse;
 import com.android.common.utils.ResultUtils;
 import com.android.model.BanRecord;
+import com.android.model.request.AddNewsRequest;
 import com.android.service.AdminService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -41,6 +42,13 @@ public class AdminController {
     public BaseResponse<Boolean> unbanUser(@RequestParam("userId") Long userId) {
         log.info("解封用户，userId: {}", userId);
         boolean result = adminService.unbanUser(userId);
+        return ResultUtils.success(result);
+    }
+
+    @PostMapping("addNews")
+    public BaseResponse<Boolean> addNews(@RequestBody AddNewsRequest addNewsRequest) {
+        log.info("添加新闻，news: {}", addNewsRequest);
+        boolean result = adminService.addNews(addNewsRequest);
         return ResultUtils.success(result);
     }
 }

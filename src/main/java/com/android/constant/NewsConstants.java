@@ -34,5 +34,26 @@ public final class NewsConstants {
     public static final String DESC_SPORTS = "体育";
     public static final String DESC_ENT = "娱乐";
 
-
+    public static String translateType(String type) {
+        switch (type) {
+            case TYPE_YAOWEN:
+                return DESC_YAOWEN;
+            case TYPE_GUONEI:
+                return DESC_GUONEI;
+            case TYPE_GUOJI:
+                return DESC_GUOJI;
+            case TYPE_WAR:
+                return DESC_WAR;
+            case TYPE_TECH:
+                return DESC_TECH;
+            case TYPE_MONEY:
+                return DESC_MONEY;
+            case TYPE_SPORTS:
+                return DESC_SPORTS;
+            case TYPE_ENT:
+                return DESC_ENT;
+            default:
+                return "未知";
+        }
+    }
 }

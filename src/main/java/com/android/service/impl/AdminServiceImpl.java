@@ -3,13 +3,20 @@ package com.android.service.impl;
 
 import com.android.common.ErrorCode;
 import com.android.common.exception.BusinessException;
+import com.android.constant.NewsConstants;
 import com.android.mapper.BanRecordMapper;
+import com.android.mapper.NewsContentMapper;
+import com.android.mapper.NewsMapper;
 import com.android.mapper.UserMapper;
 import com.android.model.BanRecord;
+import com.android.model.News;
+import com.android.model.NewsContent;
 import com.android.model.User;
+import com.android.model.request.AddNewsRequest;
 import com.android.service.AdminService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
+import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +31,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Resource
     UserMapper userMapper;
+
+    @Resource
+    NewsMapper newsMapper;
+
+    @Resource
+    NewsContentMapper newsContentMapper;
 
 
     @Override
@@ -73,5 +86,22 @@ public class AdminServiceImpl implements AdminService {
         QueryWrapper<BanRecord> wrapper = new QueryWrapper<>();
         wrapper.eq("userId", userId);
         return res & banRecordMapper.delete(wrapper) > 0;
+    }
+
+    @Override
+    public boolean addNews(AddNewsRequest addNewsRequest) {
+        News news = new News();
+        news.setTitle(addNewsRequest.getTitle());
+        news.setNewsType(addNewsRequest.getNewsType());
+        news.setTypeDesc(NewsConstants.translateType(addNewsRequest.getNewsType()));
+        news.setPublishTime(addNewsRequest.getPublishTime());
+        news.setCreateTime(new Date());
+        boolean res = newsMapper.insert(news) > 0;
+
+        NewsContent newsContent = new NewsContent();
+        newsContent.setContent(addNewsRequest.getHtmlContent());
+        newsContent.setNewsId(news.getNewsId());
+        newsContent.setPlainContent(Jsoup.parse(addNewsRequest.getHtmlContent()).text());
+        return res & newsContentMapper.insert(newsContent) > 0;
     }
 }
