@@ -31,4 +31,7 @@ public class User implements Serializable {
     @TableField("role")
     private Integer role;
 
+    @TableField("status")
+    private Integer status;
+
 }

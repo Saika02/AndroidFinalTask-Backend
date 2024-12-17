@@ -85,5 +85,12 @@ public class NewsController {
         return ResultUtils.success(result);
     }
 
+    @DeleteMapping("delComment")
+    public BaseResponse<Boolean> delComment(@RequestParam("commentId") Long commentId) {
+        log.info("删除评论，commentId: {}", commentId);
+        Boolean result = newsService.delComment(commentId);
+        return ResultUtils.success(result);
+    }
+
 
 }

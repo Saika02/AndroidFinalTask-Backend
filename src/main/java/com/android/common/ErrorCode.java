@@ -17,6 +17,7 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(40300,"用户不存在",""),
     USER_EXISTS(40301,"用户已存在",""),
+    USER_BANNED(40302,"用户已被封禁",""),
 
     NEWS_NOT_FOUND(40400,"新闻不存在",""),
     NEWS_EXISTS(40401,"新闻已存在",""),

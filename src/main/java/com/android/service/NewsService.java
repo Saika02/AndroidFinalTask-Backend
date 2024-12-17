@@ -27,4 +27,6 @@ public interface NewsService extends IService<News> {
     List<Comment> getNewsComment(Long newsId);
 
     boolean saveComment(Comment comment);
+
+    Boolean delComment(Long commentId);
 }

@@ -5,36 +5,28 @@ import com.android.common.exception.BusinessException;
 import com.android.constant.NewsConstants;
 import com.android.constant.UserConstants;
 import com.android.mapper.*;
-import com.android.model.Comment;
-import com.android.model.News;
-import com.android.model.NewsContent;
-import com.android.model.UserFavorite;
+import com.android.model.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.android.service.NewsService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static net.sf.jsqlparser.parser.feature.Feature.limit;
-
 /**
-* @author DELL G15
-* @description 针对表【news(新闻表)】的数据库操作Service实现
-* @createDate 2024-12-03 00:17:14
-*/
+ * @author DELL G15
+ * @description 针对表【news(新闻表)】的数据库操作Service实现
+ * @createDate 2024-12-03 00:17:14
+ */
 @Service
 @Slf4j
 public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
-    implements NewsService{
+        implements NewsService {
 
 
     @Resource
@@ -50,6 +42,9 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
 
     @Resource
     private CommentMapper commentMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     @Override
     public List<News> getRandomNewsList() {
@@ -76,7 +71,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
                     .last("LIMIT " + perTypeLimit);
             result.addAll(newsMapper.selectList(queryWrapper));
         }
-        if(result.size() < limit) {
+        if (result.size() < limit) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "获取新闻失败");
         }
         // 随机打乱结果
@@ -86,13 +81,12 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
     }
 
 
-
     @Override
     public String getNewsContent(Long newsId) {
         QueryWrapper<NewsContent> wrapper = new QueryWrapper<>();
         wrapper.eq("newsId", newsId);
         NewsContent newsContent = newsContentMapper.selectOne(wrapper);
-        if(newsContent == null) {
+        if (newsContent == null) {
             throw new BusinessException(ErrorCode.NEWS_NOT_FOUND, "新闻内容不存在");
         }
         return buildFormattedHtml(newsContent.getContent());
@@ -114,8 +108,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
     public List<News> getFavoriteNews(Long userId) {
         try {
             return userFavoriteMapper.getFavoriteNews(userId);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据库查询失败");
         }
     }
@@ -124,8 +117,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
     public List<News> getBrowsingHistories(Long userId) {
         try {
             return browsingHistoryMapper.selectHistoryNews(userId);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据库查询失败");
         }
     }
@@ -138,7 +130,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
                 .orderByAsc("RAND()")
                 .last("LIMIT " + limit);
         List<News> list = newsMapper.selectList(queryWrapper);
-        if(list.size() < limit) {
+        if (list.size() < limit) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "获取新闻失败");
         }
         return list;
@@ -146,7 +138,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
 
     @Override
     public List<News> searchNews(String keyword) {
-        if(StringUtils.isBlank(keyword)) {
+        if (StringUtils.isBlank(keyword)) {
             return null;
         }
         return newsMapper.searchNews(keyword);
@@ -161,8 +153,17 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
 
     @Override
     public boolean saveComment(Comment comment) {
+        User user = userMapper.selectById(comment.getUserId());
+        if(user.getStatus() == 1){
+            throw new BusinessException(ErrorCode.USER_BANNED, "用户已被封禁");
+        }
         log.info("发送评论，comment: {}", comment);
         return commentMapper.insert(comment) > 0;
+    }
+
+    @Override
+    public Boolean delComment(Long commentId) {
+        return commentMapper.deleteById(commentId) > 0;
     }
 
     private String buildFormattedHtml(String content) {
