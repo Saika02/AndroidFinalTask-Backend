@@ -26,4 +26,6 @@ public interface UserService extends IService<User> {
     Integer addHistory(Long userId, Long newsId);
 
     Integer clearHistories(Long userId);
+
+    Boolean removeOneHistory(Long userId, Long newsId);
 }

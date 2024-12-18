@@ -17,7 +17,7 @@ public interface NewsMapper extends BaseMapper<News> {
     @Select("""
             SELECT n.*
             FROM news n
-            WHERE n.title LIKE CONCAT('%', #{keyword}, '%')
+            WHERE n.title LIKE CONCAT('%', #{keyword}, '%') and n.isDeleted = 0
          
             ORDER BY n.publishTime DESC
             """)

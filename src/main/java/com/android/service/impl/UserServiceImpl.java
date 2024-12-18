@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
@@ -230,6 +231,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             log.error("清空失败", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "清空失败");
         }
+    }
+
+    @Override
+    public Boolean removeOneHistory(Long userId, Long newsId) {
+        QueryWrapper<BrowsingHistory> wrapper = new QueryWrapper<>();
+        wrapper.eq(UserConstants.USER_ID, userId);
+        wrapper.eq(NewsConstants.NEWS_ID, newsId);
+        return browsingHistoryMapper.delete(wrapper) > 0;
     }
 }
 

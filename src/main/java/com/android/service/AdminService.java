@@ -14,4 +14,7 @@ public interface AdminService{
     boolean unbanUser(Long userId);
 
     boolean addNews(AddNewsRequest addNewsRequest);
+
+    boolean deleteNews(Long newsId);
+
 }

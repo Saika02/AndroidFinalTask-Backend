@@ -13,6 +13,7 @@ public final class NewsConstants {
     public static final String CREATE_TIME = "createTime";
     public static final String UPDATE_TIME = "updateTime";
     public static final String TYPE_DESC = "typeDesc";
+    public static final String isDeleted = "isDeleted";
 
     // 新闻类型常量
     public static final String TYPE_YAOWEN = "yaowen20200213";

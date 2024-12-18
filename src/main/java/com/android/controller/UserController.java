@@ -67,4 +67,9 @@ public class UserController {
     public BaseResponse<Integer> clearHistories(@RequestParam("userId") Long userId) {
         return ResultUtils.success(userService.clearHistories(userId));
     }
+
+    @DeleteMapping("/removeOneHistory")
+    public BaseResponse<Boolean> removeOneHistory(@RequestParam("userId") Long userId, @RequestParam("newsId") Long newsId) {
+        return ResultUtils.success(userService.removeOneHistory(userId, newsId));
+    }
 } 

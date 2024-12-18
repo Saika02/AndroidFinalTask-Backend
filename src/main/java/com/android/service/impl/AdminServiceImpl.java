@@ -104,4 +104,9 @@ public class AdminServiceImpl implements AdminService {
         newsContent.setPlainContent(Jsoup.parse(addNewsRequest.getHtmlContent()).text());
         return res & newsContentMapper.insert(newsContent) > 0;
     }
+
+    @Override
+    public boolean deleteNews(Long newsId) {
+        return newsMapper.deleteById(newsId) > 0;
+    }
 }

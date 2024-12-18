@@ -67,6 +67,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
         for (String type : newsTypes) {
             QueryWrapper<News> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq(NewsConstants.NEWS_TYPE, type)
+                    .eq(NewsConstants.isDeleted, 0)
                     .orderByAsc("RAND()")
                     .last("LIMIT " + perTypeLimit);
             result.addAll(newsMapper.selectList(queryWrapper));
@@ -128,6 +129,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News>
         QueryWrapper<News> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(NewsConstants.NEWS_TYPE, type)
                 .orderByAsc("RAND()")
+                .eq(NewsConstants.isDeleted, 0)
                 .last("LIMIT " + limit);
         List<News> list = newsMapper.selectList(queryWrapper);
         if (list.size() < limit) {

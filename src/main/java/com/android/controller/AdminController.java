@@ -51,4 +51,11 @@ public class AdminController {
         boolean result = adminService.addNews(addNewsRequest);
         return ResultUtils.success(result);
     }
+
+    @DeleteMapping("deleteNews")
+    public BaseResponse<Boolean> deleteNews(@RequestParam("newsId") Long newsId) {
+        log.info("删除新闻，newsId: {}", newsId);
+        boolean result = adminService.deleteNews(newsId);
+        return ResultUtils.success(result);
+    }
 }
