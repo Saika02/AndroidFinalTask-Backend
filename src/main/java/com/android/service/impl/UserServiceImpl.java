@@ -56,6 +56,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setAvatarUrl(tempUser.getAvatarUrl());
         safetyUser.setUsername(tempUser.getUsername());
         safetyUser.setRole(tempUser.getRole());
+        safetyUser.setStatus(tempUser.getStatus());
+
         return safetyUser;
     }
 

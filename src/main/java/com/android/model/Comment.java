@@ -1,9 +1,7 @@
 package com.android.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
@@ -59,11 +57,16 @@ public class Comment implements Serializable {
     @TableField(value = "createTime")
     private String createTime;
 
+    @TableField(value = "userRole")
+    private Integer userRole;
+
     /**
-     * 状态(1:正常 0:删除)
+     * 状态(0:正常 1:删除)
      */
-    @TableField(value = "status")
-    private Integer status;
+    @TableLogic
+    @TableField(value = "isDeleted")
+    private Integer isDeleted;
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

@@ -1,0 +1,110 @@
+-- auto-generated definition
+create table ban_record
+(
+    id         bigint auto_increment
+        primary key,
+    userId     bigint       not null comment '被封禁用户ID',
+    adminId    bigint       not null comment '操作管理员ID',
+    actionType tinyint      not null comment '操作类型(0:解封 1:封禁)',
+    actionTime varchar(50)  null comment '操作时间',
+    reason     varchar(255) null comment '操作原因',
+    constraint ban_record_ibfk_1
+        foreign key (userId) references user (userId)
+)
+    comment '用户封禁记录表';
+
+create index userId
+    on ban_record (userId);
+
+
+
+-- auto-generated definition
+create table browsing_history
+(
+    id         bigint auto_increment
+        primary key,
+    userId     bigint                             not null,
+    newsId     bigint                             not null,
+    browseTime datetime default CURRENT_TIMESTAMP not null,
+    constraint browsing_history_ibfk_1
+        foreign key (userId) references user (userId),
+    constraint browsing_history_ibfk_2
+        foreign key (newsId) references news (newsId)
+);
+
+create index news_id
+    on browsing_history (newsId);
+
+create index user_id
+    on browsing_history (userId);
+
+-- auto-generated definition
+create table comment
+(
+    id         bigint auto_increment comment '评论ID'
+        primary key,
+    newsId     bigint            not null comment '关联的新闻ID',
+    userId     bigint            not null comment '评论用户ID',
+    username   varchar(50)       null,
+    avatarUrl  varchar(255)      null comment '用户头像Url',
+    content    text              not null comment '评论内容',
+    createTime varchar(50)       null comment '评论时间',
+    status     tinyint default 1 null comment '状态(1:正常 0:删除)',
+    constraint fk_comment_news
+        foreign key (newsId) references news (newsId),
+    constraint fk_comment_user
+        foreign key (userId) references user (userId)
+)
+    comment '评论表' charset = utf8mb4;
+
+create index idx_news_id
+    on comment (newsId);
+
+create index idx_user_id
+    on comment (userId);
+
+    -- auto-generated definition
+    create table news_content
+    (
+        id           bigint auto_increment comment '主键ID'
+            primary key,
+        newsId       bigint   not null comment '关联的新闻ID',
+        content      longtext not null comment 'HTML格式内容',
+        plainContent longtext not null comment '纯文本内容',
+        constraint fk_news_content_news
+            foreign key (newsId) references news (newsId)
+    )
+        comment '新闻内容表' charset = utf8mb4;
+
+    create index idx_news_id
+        on news_content (newsId);
+
+-- auto-generated definition
+create table user
+(
+    userId    bigint auto_increment
+        primary key,
+    username  varchar(50)       not null,
+    password  varchar(255)      not null,
+    avatarUrl varchar(255)      null comment '用户头像URL',
+    role      tinyint default 0 not null,
+    status    tinyint default 0 null,
+    constraint username
+        unique (username)
+)
+    charset = utf8mb4;
+
+-- auto-generated definition
+create table user_favorite
+(
+    id     bigint auto_increment
+        primary key,
+    userId bigint not null,
+    newsId bigint not null,
+    constraint uk_user_news
+        unique (userId, newsId)
+)
+    charset = utf8mb4;
+
+
+

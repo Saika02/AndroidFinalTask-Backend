@@ -22,6 +22,12 @@ public class UserController {
     @Resource
     UserService userService;
 
+
+    @GetMapping("/getUserById")
+    public BaseResponse<User> getUserById(@RequestParam("userId") Long userId) {
+        return ResultUtils.success(userService.getUserById(userId));
+    }
+
     @PostMapping("/login")
     public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest) {
         if (userLoginRequest == null) {
